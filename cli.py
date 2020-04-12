@@ -19,40 +19,26 @@ OVERWRAP = 3
 
 class CLI:
     """News crawler"""
-    def download_since(self, latest):
-        """S3에 저장된 가장 최근 뉴스 이후의 뉴스들을 새로 받아서 파일을 생성"""
+    def fetch_missings(self):
+        """해당 일자의 파일이 없는 경우에만 새로 받아오기"""
         os.makedirs(DATA_DIR, exist_ok=True)
-        try:
-            latest_date = datetime.strptime(latest, '%Y%m%d.csv.gz').date()
-        except ValueError:
-            latest_date = CAP
-
-        start_date = max(CAP, latest_date - timedelta(days=OVERWRAP - 1))
-        end_date = crawl.get_kst_today()
         pool = Pool(16)
-        for i in range((end_date - start_date).days + 1):
-            fn = (start_date + timedelta(days=i)).strftime('%Y%m%d')
-            print(f'{fn}.csv', end=' ', flush=True)
-            articles = fetch_a_day(fn, pool)
-            print(len(articles))
-            with open(os.path.join(DATA_DIR, f'{fn}.csv'), 'w') as f:
-                write_csv(articles, f)
-        pool.terminate()
 
-    def download_missing(self):
-        """data 폴더에 해당 일자의 파일이 없는 뉴스만 새로 받아서 빠진 파일을 생성"""
-        os.makedirs(DATA_DIR, exist_ok=True)
-        cur_files = [fn.split('.')[0] for fn in os.listdir(DATA_DIR)]
-        missing_files = list(crawl.files_to_fetch(CAP, OVERWRAP, cur_files))
+        existing_files = {line[:8] for line in sys.stdin}
+        today = crawl.get_kst_today()
+        n_days = (today - CAP).days + 1
 
-        pool = Pool(16)
-        for fn in missing_files:
-            print(f'{fn}.csv', end=' ', flush=True)
-            articles = fetch_a_day(fn, pool)
+        for day in range(n_days):
+            filename = (CAP + timedelta(days=day)).strftime('%Y%m%d')
+            overwraps = day >= n_days - OVERWRAP
+            exists = filename in existing_files
+            if not overwraps and exists:
+                continue
+            print(f'{filename}.csv', end=' ', flush=True)
+            articles = fetch_a_day(filename, pool)
             print(len(articles))
-            with open(os.path.join(DATA_DIR, f'{fn}.csv'), 'w') as f:
+            with open(os.path.join(DATA_DIR, f'{filename}.csv'), 'w') as f:
                 write_csv(articles, f)
-        print()
 
         pool.terminate()
 
