@@ -1,0 +1,12 @@
+# Project
+data/
+.env
+
+# Python
+.mypy_cache/**
+__pycache__/
+.python-version
+.coverage
+
+# Misc.
+*.swp
