@@ -13,7 +13,7 @@ import crawl
 
 DATA_DIR = 'data'
 
-CAP = date(2019, 5, 1)
+CAP = date(2020, 4, 1)
 OVERWRAP = 3
 
 
