@@ -23,7 +23,7 @@ class CLI:
         """S3에 저장된 가장 최근 뉴스 이후의 뉴스들을 새로 받아서 파일을 생성"""
         os.makedirs(DATA_DIR, exist_ok=True)
         try:
-            latest_date = datetime.strptime(latest, '%Y%m%d.csv').date()
+            latest_date = datetime.strptime(latest, '%Y%m%d.csv.gz').date()
         except ValueError:
             latest_date = CAP
 
