@@ -4,25 +4,9 @@ from itertools import groupby
 from typing import List, Optional, Iterable
 
 
-def get_kst_today(now: Optional[datetime]=None) -> date:
+def get_kst_today(now: Optional[datetime] = None) -> date:
     now = now or datetime.utcnow()
     return (now + timedelta(hours=9)).date()
-
-
-def files_to_fetch(cap: date, overwrap: int, files: List[str],
-                   now: Optional[datetime]=None) -> Iterable[str]:
-    kst_today = get_kst_today(now)
-    days = (kst_today - cap).days + 1
-    fileset = set(files)
-    return (
-        d.strftime('%Y%m%d') for i in range(days)
-        if (
-            # 이미 있는 파일이면 제외
-            (d := cap + timedelta(days=i)).strftime('%Y%m%d') not in fileset or
-            # 단 다시 수집할 기간(overwrap)에 속해 있으면 포함
-            i >= days - overwrap
-        )
-    )
 
 
 def cleanse(articles):
@@ -94,7 +78,8 @@ def is_meaningful(article):
 
     # 경제 기사 제외
     category_exclusions = {'economic', 'digital'}
-    if article.get('cateInfo', {}).get('category', None) in category_exclusions:
+    if article.get('cateInfo', {}).get('category',
+                                       None) in category_exclusions:
         return False
 
     # 제목에 특정 키워드가 있는 기사

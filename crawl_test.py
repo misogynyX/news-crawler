@@ -10,100 +10,34 @@ class TestDatesToFetch:
         three_pm = dt(2012, 3, 4, 15, 0, 0)
         assert crawl.get_kst_today(three_pm) == d(2012, 3, 5)
 
-    def test_normal(self):
-        cap = d(2016, 1, 1)
-        overwrap = 2
-        files = []
-        now = dt(2016, 1, 4, 0, 0, 0)
-        actual = list(crawl.files_to_fetch(cap, overwrap, files, now))
-        expected = ['20160101', '20160102', '20160103', '20160104']
-        assert expected == actual
-
-    def test_existing_file(self):
-        cap = d(2016, 1, 1)
-        overwrap = 2
-        files = ['20160102']
-        now = dt(2016, 1, 4, 0, 0, 0)
-        actual = list(crawl.files_to_fetch(cap, overwrap, files, now))
-        expected = ['20160101', '20160103', '20160104']
-        assert expected == actual
-
-    def test_existing_file_but_in_overwrapped_range(self):
-        cap = d(2016, 1, 1)
-        overwrap = 2
-        files = ['20160101', '20160102', '20160103']
-        now = dt(2016, 1, 4, 0, 0, 0)
-        actual = list(crawl.files_to_fetch(cap, overwrap, files, now))
-        expected = ['20160103', '20160104']
-        assert expected == actual
-
 
 class TestCleansing:
     def test_remove_duplications(self):
         sources = [
-            {
-                'title': 't0',
-                'cp_name': 'c0'
-            },
-            {
-                'title': 't1',
-                'cp_name': 'c0'
-            },
-            {
-                'title': 't1',
-                'cp_name': 'c1'
-            },
-            {
-                'title': 't0',
-                'cp_name': 'c0'
-            },
-            {
-                'title': 't2',
-                'cp_name': 'c2'
-            },
-            {
-                'title': 't3',
-                'cp_name': 'c2'
-            },
-            {
-                'title': 't2',
-                'cp_name': 'c2'
-            },
+            {'title': 't0', 'cp_name': 'c0'},
+            {'title': 't1', 'cp_name': 'c0'},
+            {'title': 't1', 'cp_name': 'c1'},
+            {'title': 't0', 'cp_name': 'c0'},
+            {'title': 't2', 'cp_name': 'c2'},
+            {'title': 't3', 'cp_name': 'c2'},
+            {'title': 't2', 'cp_name': 'c2'},
         ]
         expected = [
-            {
-                'title': 't0',
-                'cp_name': 'c0'
-            },
-            {
-                'title': 't1',
-                'cp_name': 'c1'
-            },
-            {
-                'title': 't2',
-                'cp_name': 'c2'
-            },
-            {
-                'title': 't3',
-                'cp_name': 'c2'
-            },
+            {'title': 't0', 'cp_name': 'c0'},
+            {'title': 't1', 'cp_name': 'c1'},
+            {'title': 't2', 'cp_name': 'c2'},
+            {'title': 't3', 'cp_name': 'c2'},
         ]
         actual = list(crawl.remove_duplications(sources))
         assert expected == actual
 
     def test_cleanse_article(self):
         raw = {
-            '_id': {
-                'key': '2020010299999'
-            },
-            'cpInfo': {
-                'korName': 'CP_NAME'
-            },
+            '_id': {'key': '2020010299999'},
+            'cpInfo': {'korName': 'CP_NAME'},
             'title': 'TITLE',
             'description': 'DESCRIPTION',
-            'author': {
-                'reporter': '김뫄뫄 기자, 이솨솨 기자'
-            },
+            'author': {'reporter': '김뫄뫄 기자, 이솨솨 기자'},
             'keyword': ['KW_A', 'KW_B'],
             'SOME_EXTRA_KEY': 'SOME_EXTRA_VALUE',
         }
@@ -131,7 +65,11 @@ class TestCleansing:
             ('김뫄뫄기자', ['김뫄뫄'], '띄어쓰기 없는 "기자" 빼기'),
             ('김뫄뫄, 이솨솨', ['김뫄뫄', '이솨솨'], '쉼표 처리'),
             ('김뫄뫄·이솨솨', ['김뫄뫄', '이솨솨'], '중간점 처리'),
-            ('김뫄뫄 기자;이솨솨 기자', ['김뫄뫄', '이솨솨'], '기자 빼고 구분자 처리'),
+            (
+                '김뫄뫄 기자;이솨솨 기자',
+                ['김뫄뫄', '이솨솨'],
+                '기자 빼고 구분자 처리',
+            ),
             ('CBS노컷뉴스 김뫄뫄 기자', ['김뫄뫄'], '언론사 이름 빼기 1'),
             ('김뫄뫄 CBS노컷뉴스 기자', ['김뫄뫄'], '언론사 이름 빼기 2'),
             ('CBS 김현정의 뉴스쇼', ['김현정'], '특수한 경우 1'),
