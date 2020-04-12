@@ -1,6 +1,6 @@
 # 신문 기사 수집
 
-![Update data](https://github.com/misogynyX/news/workflows/Update%20data/badge.svg)
+![Update data](https://github.com/misogynyX/news-crawler/workflows/Update%20data/badge.svg)
 
 일자별 신문 기사를 모읍니다. 저작권 문제로 인해 본문은 제외하고 제목, 링크닏
 키워드, 게시일 등 메타 정보만 저장합니다.
