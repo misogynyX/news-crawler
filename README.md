@@ -2,18 +2,18 @@
 
 ![Update data](https://github.com/misogynyX/news/workflows/Update%20data/badge.svg)
 
-일자별 조회수 높은 신문 기사 모음입니다. 저작권 문제로 인해 본문은 제외하고 제목, 링크, 키워드, 게시일 등 메타 정보만 저장합니다.
+일자별 신문 기사를 모읍니다. 저작권 문제로 인해 본문은 제외하고 제목, 링크닏
+키워드, 게시일 등 메타 정보만 저장합니다.
 
 ## 수집 기준
 
-- 2018년 1월 1일부터 수집
-- 다음 뉴스 일별 조회수, 댓글수 기준 각각 상위 200개 기사를 읽어온 후 병합
-- 매일 0시(UTC 기준)에 전일 데이터를 추가
-- `docs/data` 폴더에 `yyyymmdd.csv` 형식으로 저장
+- 2016년 1월 1일부터 수집
+- 일부 전문지(경제/레포츠/취미 등) 제외
+- 일부 기사 제외(주식 기사, 포토 뉴스, 단신 등)
 
 ## 데이터 설명
 
-- `article_id`: 기사 고유 번호
+- `article_id`: 기사 고유 번호. `https://news.v.daum.net/v/` 뒤에 붙이면 url
 - `cp_name`: 언론사 이름
 - `title`: 기사 제목
 - `description`: 기사 본문 앞부분 발췌
@@ -49,4 +49,24 @@ pytest
 
 # 코드가 수정되면 자동으로 테스트가 실행되도록 하기
 ptw
+```
+
+## 데이터 수집하기
+
+환경 변수:
+
+* `AWS_ACCESS_KEY_ID`: AWS access key id
+* `AWS_SECRET_ACCESS_KEY`: AWS secret key
+* `AWS_S3_BUCKET`: 데이터를 동기화할 버킷 이름
+
+새로 추가된 뉴스를 수집해서 S3에 저장하기:
+
+```
+./update.sh
+```
+
+다음 명령을 실행하면 기타 CLI 명령들을 확인할 수 있습니다.
+
+```
+python cli.py
 ```

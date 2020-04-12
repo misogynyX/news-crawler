@@ -93,8 +93,8 @@ def is_meaningful(article):
         return False
 
     # 경제 기사 제외
-    if article.get('cateInfo', {}).get('category',
-                                       None) in {'economic', 'digital'}:
+    category_exclusions = {'economic', 'digital'}
+    if article.get('cateInfo', {}).get('category', None) in category_exclusions:
         return False
 
     # 제목에 특정 키워드가 있는 기사
